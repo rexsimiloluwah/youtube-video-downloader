@@ -1,6 +1,7 @@
 import sys
-import qtawesome as qta
+import random
 from PyQt5.QtGui import QPixmap 
+from typing import List, Union, Dict
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import (
     QApplication,
@@ -13,11 +14,13 @@ from PyQt5.QtWidgets import (
     QAction,
     QTableWidget,
     QHeaderView,
-    QTableWidgetItem
+    QTableWidgetItem,
+    QToolBar,
+    QProgressBar
 )
 
 class MainScreen(QMainWindow):
-    def __init__(self, width=1024, height=600, parent=None):
+    def __init__(self, width: int =1024, height: int=600, parent=None):
         super(MainScreen, self).__init__(parent)
         sizeObject = QtWidgets.QDesktopWidget().screenGeometry(-1)
         self.width, self.height = sizeObject.width() - 500, sizeObject.height() - 300
@@ -68,17 +71,18 @@ class MainScreen(QMainWindow):
         )
 
         ## Toolbar 
-        self.actions_toolbar = self.addToolBar('actions')
+        self.actions_toolbar = QToolBar('actions', self)
+        self.addToolBar(QtCore.Qt.LeftToolBarArea, self.actions_toolbar)
         self.actions_toolbar.setIconSize(QtCore.QSize(48,48))
         self.actions_toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
 
         download_icon = QtGui.QIcon(QtGui.QPixmap('./images/folder.svg'))
         self.action_download = QAction("Download",self, triggered=lambda : self.download({
-            'File': 'Learn GO Programming',
-            'Size': '1.65 Gb',
-            'Status': 'Yes',
-            'Float': 'Due',
-            'Description': 'Yes'
+            'File': 'Learn GO Programming For Absolute Beginners.mp4',
+            'Title': 'Learn Go Programming for absolute beginners',
+            'Size': 'Yes',
+            'Status': random.randint(0,100),
+            'Description': 'First Download'
         }))
         self.action_download.setIcon(download_icon)
         self.action_download.setIconText("Download")
@@ -137,19 +141,27 @@ class DownloadsTable(QTableWidget):
         self.setHorizontalHeaderLabels(['File','Title','Size','Status','Description'])
         self.horizontalHeader().setDefaultSectionSize(150)
         self.horizontalHeader().setStretchLastSection(True)
-        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
-        self.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)
-        self.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        self.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
         self.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
+        self.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
 
-    def _addRow(self, data, **kwargs):
+    def _addRow(self, data: Dict, **kwargs):
+        progressBar = QProgressBar(self)
+        progressBar.setAlignment(QtCore.Qt.AlignCenter)
         rowCount = self.rowCount()
         print(rowCount)
         self.insertRow(rowCount)
 
-        for idx, v in enumerate(data.values()):
-            self.setItem(rowCount , idx, QTableWidgetItem(v))
+        d = list(data.values())
+        self.setItem(rowCount , 0, QTableWidgetItem(d[0]))
+        self.setItem(rowCount, 1, QTableWidgetItem(d[1]))
+        self.setItem(rowCount, 2, QTableWidgetItem(d[2]))
+        self.setItem(rowCount, 4, QTableWidgetItem(d[4]))
+        progressBar.setValue(int(d[3]))
+        self.setCellWidget(rowCount,3, progressBar)
+
 
     def _deleteRow(self, index):
         rows = set()

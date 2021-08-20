@@ -37,8 +37,8 @@ class YtDownloader(QMainWindow):
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.progress)
-        # Create a 20ms timer
-        self.timer.start(20)
+        # Create a 10ms timer
+        self.timer.start(15)
 
         # Dynamic modification of text 
         QtCore.QTimer.singleShot(1000, lambda: self.splashscreen.loading.setText("<strong>Welcome to YTDownloader</strong>"))
