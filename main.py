@@ -2,10 +2,13 @@ import sys
 import random
 from PyQt5.QtGui import QPixmap 
 from typing import List, Union, Dict
+from utils.convertbytes import convert
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import (
     QApplication,
     QHBoxLayout,
+    QVBoxLayout,
+    QDialogButtonBox,
     QWidget,
     QLabel,
     QMainWindow,
@@ -14,9 +17,11 @@ from PyQt5.QtWidgets import (
     QAction,
     QTableWidget,
     QHeaderView,
+    QDialog,
     QTableWidgetItem,
     QToolBar,
-    QProgressBar
+    QProgressBar,
+    QAbstractItemView
 )
 
 class MainScreen(QMainWindow):
@@ -24,6 +29,7 @@ class MainScreen(QMainWindow):
         super(MainScreen, self).__init__(parent)
         sizeObject = QtWidgets.QDesktopWidget().screenGeometry(-1)
         self.width, self.height = sizeObject.width() - 500, sizeObject.height() - 300
+        self._selectedRows= set()
         self.loadUi()
         self.show()
 
@@ -80,7 +86,7 @@ class MainScreen(QMainWindow):
         self.action_download = QAction("Download",self, triggered=lambda : self.download({
             'File': 'Learn GO Programming For Absolute Beginners.mp4',
             'Title': 'Learn Go Programming for absolute beginners',
-            'Size': 'Yes',
+            'Size': convert(random.randint(1024, 200000000), True),
             'Status': random.randint(0,100),
             'Description': 'First Download'
         }))
@@ -107,13 +113,18 @@ class MainScreen(QMainWindow):
         self.action_schedule.setIcon(schedule_icon)
         self.action_schedule.setIconText("Schedule")
 
+        self.action_pause.setEnabled(False)
+        self.action_delete.setEnabled(False)
+
         self.actions_toolbar.addAction(self.action_download)
         self.actions_toolbar.addAction(self.action_pause)
         self.actions_toolbar.addAction(self.action_delete)
         self.actions_toolbar.addAction(self.action_options)
         self.actions_toolbar.addAction(self.action_schedule)
-        
+
         self.table = DownloadsTable(self)
+        self.table.cellClicked.connect(lambda row : self.updateSelectedRow(row))
+        
         self.setCentralWidget(self.table)
 
         self.center()
@@ -124,9 +135,18 @@ class MainScreen(QMainWindow):
 
     def download(self, data):
         self.table._addRow(data)
+        dlg = DownloadDialog()
+        dlg.exec()
 
     def deleteDownload(self):
         self.table._deleteRow(2)
+        self.action_pause.setEnabled(False)
+        self.action_delete.setEnabled(False)
+
+    def updateSelectedRow(self, row):
+        self._selectedRows.add(row)
+        self.action_pause.setEnabled(True)
+        self.action_delete.setEnabled(True)
 
     def center(self):
         """ Automatically center the window """
@@ -135,12 +155,27 @@ class MainScreen(QMainWindow):
         qRectangle.moveCenter(center)
         self.move(qRectangle.topLeft())
 
+class DownloadDialog(QDialog):
+    def __init__(self):
+        super(DownloadDialog, self).__init__()
+        self.setWindowTitle("Enter Youtube Video URL")
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
+        self.buttonBox.accepted.connect(lambda : print("Accepted."))
+        self.buttonBox.rejected.connect(lambda : print("Rejected."))
+
+        self.layout = QVBoxLayout()
+        message = QLabel("Download Dialog")
+        self.layout.addWidget(message)
+        self.layout.addWidget(self.buttonBox)
+        self.setLayout(self.layout)
+
 class DownloadsTable(QTableWidget):
     def __init__(self, parent=None):
         super(DownloadsTable, self).__init__(0,5, parent)
         self.setHorizontalHeaderLabels(['File','Title','Size','Status','Description'])
         self.horizontalHeader().setDefaultSectionSize(150)
         self.horizontalHeader().setStretchLastSection(True)
+        #self.setSelectionMode(QAbstractItemView.MultiSelection)
         self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
@@ -148,6 +183,7 @@ class DownloadsTable(QTableWidget):
         self.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
 
     def _addRow(self, data: Dict, **kwargs):
+        #print(f'[SELECTED ROWS]: {self._selectedRows}')
         progressBar = QProgressBar(self)
         progressBar.setAlignment(QtCore.Qt.AlignCenter)
         rowCount = self.rowCount()
@@ -161,7 +197,6 @@ class DownloadsTable(QTableWidget):
         self.setItem(rowCount, 4, QTableWidgetItem(d[4]))
         progressBar.setValue(int(d[3]))
         self.setCellWidget(rowCount,3, progressBar)
-
 
     def _deleteRow(self, index):
         rows = set()
