@@ -38,3 +38,6 @@ $ python app.py
 - [ ] Add customizable settings
 - [ ] Improve the UI and UX
 - [ ] Fix general bugs
+
+## Demonstration
+[View Video Demo on Youtube](https://youtu.be/N6LXgHfIbbI)
