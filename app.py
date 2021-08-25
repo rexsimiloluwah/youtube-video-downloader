@@ -1,14 +1,15 @@
+# @author [Similoluwa Okunowo]
+# @email [rexsimiloluwa@gmail.com]
+# @create date 2021-08-25 20:30:50
+# @modify date 2021-08-25 20:30:50
+# @desc [Main application]
+
 import sys
 from PyQt5.QtGui import QPixmap, QColor 
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import (
     QApplication,
-    QWidget,
-    QLabel,
     QMainWindow,
-    QPushButton,
-    QDesktopWidget,
-    QGridLayout,
     QGraphicsDropShadowEffect
 )
 from splashscreen import SplashScreen

@@ -1,3 +1,9 @@
+# @author [Similoluwa Okunowo]
+# @email [rexsimiloluwa@gmail.com]
+# @create date 2021-08-25 20:30:50
+# @modify date 2021-08-25 20:30:50
+# @desc [Utility functions for downloading youtube videos and playlists using Pytube]
+
 import os 
 import threading
 from pytube import YouTube, Playlist

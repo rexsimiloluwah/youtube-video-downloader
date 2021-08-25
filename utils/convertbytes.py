@@ -1,4 +1,9 @@
-import math 
+# @author [Similoluwa Okunowo]
+# @email [rexsimiloluwa@gmail.com]
+# @create date 2021-08-25 20:30:50
+# @modify date 2021-08-25 20:30:50
+# @desc [Utility function for converting filesizes (integers) to Human readable bytes]
+
 from typing import List, Union
 
 METRIC_LABELS = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
