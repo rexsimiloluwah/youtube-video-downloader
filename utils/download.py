@@ -37,7 +37,7 @@ def download_playlist(url: str, **kwargs):
     for thread in thread_list:
         thread.join()
 
-def video_description(url: str):
+def video_description(url: str, on_download_progress, on_download_complete):
     video_object = OrderedDict()
     video = YouTube(
         url,
@@ -61,7 +61,7 @@ def on_download_complete(stream, filepath):
     print(f'[COMPLETED]: Saved in {filepath}')
 
 if __name__=='__main__':
-    video_obj = video_description('https://youtu.be/vo_lZiytsMw')
+    video_obj = video_description('https://youtu.be/vo_lZiytsMw', on_download_progress, on_download_complete)
     playlist_url= 'https://youtu.be/FLQ-Vhw1NYQ?list=PL4cUxeGkcC9jLYyp2Aoh6hcWuxFDX6PBJ'
     #download_video(video_obj, best=True)
     download_playlist(playlist_url)
