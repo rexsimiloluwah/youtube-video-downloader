@@ -7,7 +7,7 @@
 
 [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
-## ⚠️ Still in Development, This is just a little POC put up in a few hours, Kindly forgive any bugs or poorly written code !!!
+## ⚠️ Still in Development, This is just a little POC put up in few hours, Kindly forgive any bugs or poorly written code !!!
 
 ## To run this app
 1. Clone the repository 
